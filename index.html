@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Happy New Year!</title>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./reset.css" />
+    <link rel="stylesheet" href="./styles.css" />
+
+    <meta
+      property="og:image"
+      content="https://happynewyear.africa/og-image.fabc8db3.png"
+    />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="760" />
+    <meta
+      property="og:image:alt"
+      content="A screenshot of the happynewyear.africa website"
+    />
+  </head>
+  <body>
+    <div class="card-wrapper">
+      <div class="card">
+        <div class="player-wrapper-outer">
+          <div class="player-wrapper-inner">
+            <div id="player"></div>
+
+            <p class="video-message">
+              Video will auto-play at the right time — so keep this browser tab
+              active!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="twitter-wrapper">
+        <blockquote class="twitter-tweet" data-theme="light">
+          <p lang="en" dir="ltr">
+            If you play “Africa” by Toto at exactly 11:58:43pm on New Year’s
+            Eve, the first chorus will play at exactly midnight. Kick off 2018
+            the way it’s meant to be
+          </p>
+          &mdash; Jeremy (@CorgiWeather)
+          <a
+            href="https://twitter.com/CorgiWeather/status/942525005203689475?ref_src=twsrc%5Etfw"
+            >December 17, 2017</a
+          >
+        </blockquote>
+        <script
+          async
+          src="https://platform.twitter.com/widgets.js"
+          charset="utf-8"
+        ></script>
+      </div>
+
+      <div id="timer">
+        <div id="timer__countdown">01:00:00</div>
+        until the new year!
+      </div>
+    </div>
+
+    <script>
+      var tag = document.createElement("script");
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player("player", {
+          height: "390",
+          width: "640",
+          videoId: "FTQbiNvZqaY",
+          events: {
+            onReady: onPlayerReady
+          }
+        });
+      }
+
+      var currentYear = new Date().getFullYear();
+      var newYear = +new Date(`${currentYear + 1}-01-01T00:00:00`);
+      // newYear = +new Date("2019-12-31T12:12:00");
+
+      // The time referenced in the tweet from @CorgiWeather (11:58:43) doesn't
+      // sync with this video; it's actually 11:58:50. See
+      // https://www.youtube.com/watch?time_continue=70&v=FTQbiNvZqaY
+      var msUntilChorus = 70000;
+
+      var startedPlaying = false;
+
+      function onPlayerReady(event) {
+        function updateTime() {
+          var timer = document.getElementById("timer");
+          var countdown = document.getElementById("timer__countdown");
+
+          var now = Date.now();
+          var msUntilNewYear = newYear - now;
+
+          if (msUntilNewYear <= 0) {
+            timer.setAttribute("class", "timer--hidden");
+          } else {
+            countdown.innerText = formatTime(msUntilNewYear);
+            setTimeout(updateTime, 500);
+          }
+
+          if (startedPlaying) return;
+
+          if (msUntilNewYear <= msUntilChorus) {
+            event.target.playVideo();
+            startedPlaying = true;
+          }
+        }
+
+        updateTime();
+      }
+
+      function formatTime(ms) {
+        var seconds = Math.floor(ms / 1000) % 60;
+        var minutes = Math.floor(ms / 1000 / 60) % 60;
+        var hours = Math.floor(ms / 1000 / 60 / 60);
+
+        hours = hours < 10 ? "0" + hours : hours;
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        return hours + ":" + minutes + ":" + seconds;
+      }
+    </script>
+  </body>
+</html>
